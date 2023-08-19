@@ -7,29 +7,36 @@ fn main() {
         n: usize,
         abcd: [(usize, usize, usize, usize); n],
     }
-    let mut res: Vec<Vec<u16>> = vec![vec![0; w]; h];
-    for i in 0..n {
-        let (x1, y1, x2, y2) = abcd[i];
-        for ii in x1-1..x2 {
-            for jj in y1-1..y2 {
-                res[ii][jj] += 1;
-            }
+    let mut res = vec![vec![0; w+1]; h+1];
+    for i in abcd.iter() {
+        let x1 = i.0 - 1;
+        let y1 = i.1 - 1;
+        let x2 = i.2 - 1;
+        let y2 = i.3 - 1;
 
+        res[x1][y1] += 1;
+        res[x1][y2 + 1] -= 1;
+        res[x2+1][y1] -= 1;
+        res[x2+1][y2+1] += 1;
+    }
 
-
-            //for jj in y1-1..y2 {
-            //    res[ii][jj] += 1;
-            //}
+    for i in 0..h {
+        let mut add = 0;
+        for j in 1..=w {
+            add = res[i][j-1];
+            res[i][j] += add;
         }
     }
-    res.iter().for_each(|s| {
-        //let a = s.iter().map(|ss| ss.to_string()).collect::<Vec<String>>();
-        //fmt::Formatter::write_str(&mut self, data)
 
-        //println!("{:}", &s[..].join(" "));
-    });
-    //for i in 0..h {
-    //    println!("{:}", res_str[i].join(" "));
-    //}
-    //println!("{:?}", res);
+    for i in 0..w {
+        let mut add = 0;
+        for j in 1..=h {
+            add = res[j-1][i];
+            res[j][i] += add;
+        }
+    }
+    for i in 0..h {
+        let res_srt = res[i][..res[i].len() - 1].iter().map(|x| x.to_string()).collect::<Vec<String>>();
+        println!("{:}", res_srt.join(" "));
+    }
 }
